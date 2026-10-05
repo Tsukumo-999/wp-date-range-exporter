@@ -29,10 +29,6 @@ WordPress管理画面から操作できるため、データベースを直接�
 開始日・終了日などを指定して、対象となる記事を絞り込むことができます。
 レポート用に四半期の範囲指定ボタンで四半期範囲を指定することができます。
 
-### 記事の一覧表示
-
-取得した記事を一覧として表示し、対象となった記事を確認できます。
-
 ### エクスポート
 
 取得した記事情報を、指定した形式(csv,マークダウン,text 詳細は後述)で出力できます。
@@ -41,25 +37,35 @@ WordPress管理画面から操作できるため、データベースを直接�
 ## インストール方法
 ### 1. GitHubからダウンロード
 
-GitHubのリポジトリからプラグインをダウンロードします。
+以下のリンクをクリックして、プラグインのZIPファイルを直接ダウンロードしてください。
 
-ここにGitHubからのダウンロード方法の画像を追加予定
+ [wp-date-range-exporter.zip をダウンロード](https://github.com/Tsukumo-999/wp-date-range-exporter/raw/main/releases/wp-date-range-exporter.zip)
+
+※上記リンクからダウンロードできない場合は、リポジトリの `releases` フォルダ内にある `wp-date-range-exporter.zip` を手動でダウンロードしてください。
 
 ### 2. WordPressへインストール
 
-WordPress管理画面から、
+WordPress管理画面の左側メニューから **「プラグイン」** を開き、以下の手順でZIPファイルをアップロードします。
 
-プラグイン → 新規追加 → プラグインのアップロード
+#### ① 「プラグインを追加」をクリック
+画面上部にある「プラグインを追加」ボタンをクリックします。
+![プラグインを追加](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/wp-plugin-zip-add.png)
 
-を選択し、ダウンロードしたプラグインのZIPファイルをアップロードします。
+#### ② 「プラグインのアップロード」をクリック
+画面が切り替わったら、タイトルの横にある「プラグインのアップロード」ボタンをクリックします。
+![プラグインのアップロード](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/wp-plugin-zip-upload.png)
 
-ここにインストール画面の画像を追加予定
+#### ③ ZIPファイルを選択してインストール
+「ファイルを選択」をクリックし、先ほどダウンロードした `wp-date-range-exporter.zip` を選びます。その後、**「今すぐインストール」** をクリックしてください。
+![ZIPファイルのインストール](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/wp-plugin-select-zip.png)
+
 
 ### 3. プラグインを有効化
 
 インストールが完了したら、WordPressのプラグイン一覧から wp-date-range-exporter を有効化します。
+![プラグインの有効化](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/enable-plugin.png)
 
-ここに有効化画面の画像を追加予定
+
 
 ## 使い方
 
@@ -81,10 +87,10 @@ WordPress管理画面(ツール>記事エクスポート)から、プラグイ�
 
 ### 3. エクスポート形式を指定
 
-エクスポート形式は、以下の4種類に対応しています。出力データは、(投稿日、記事タイトル、記事リンク）の形式です。
+エクスポート形式は、以下の4種類に対応しています。出力データは、（投稿日、記事タイトル、記事リンク）の形式です。
 - 1. csv (excel対応)
-- 2. マークダウン_リスト
-- 3. マークダウン_テーブル
+- 2. Markdown形式（リスト）
+- 3. Markdown形式（テーブル）
 - 4. プレーンテキスト(カンマ区切り)
 
 ![エクスポート形式一覧](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/export-formats-dtails.png)
