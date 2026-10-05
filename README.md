@@ -40,29 +40,25 @@ WordPress管理画面から操作できるため、データベースを直接�
 ## リポジトリのファイル構成
 
 現在のリポジトリには、主に以下のファイル・ディレクトリが含まれています。
-
-※ この項目は、実際のリポジトリ構成に合わせて後から編集してください。
 ```text
 wp-date-range-exporter/
 ├── wp-date-range-exporter.php
 ├── README.md
-├── LICENSE
-|
-├── assets/
-│   ├── css/
-├── assets/
-│   ├── css/
-│   └── js/
+├── docs/ (README用の画像など)
+└── releases/
+    └── wp-date-range-exporter.zip
 ```
 
-主なファイル
-ファイル / ディレクトリ	内容
-wp-date-range-exporter.php	プラグインのメインファイル
-README.md	本ドキュメント
-assets/	CSS・JavaScript・画像など
-includes/	プラグインの処理をまとめたファイル群
-LICENSE	ライセンス情報
-インストール方法
+### 主なファイル
+| ファイル / ディレクトリ | 内容 |
+|---|---|
+| `wp-date-range-exporter.php` | プラグイン本体のソースコード |
+| `README.md` | 本ドキュメント |
+| `releases/wp-date-range-exporter.zip` | WordPressへのインストールに使用するプラグイン本体のZIPファイル |
+
+
+
+## インストール方法
 1. GitHubからダウンロード
 
 GitHubのリポジトリからプラグインをダウンロードします。
@@ -85,33 +81,41 @@ WordPress管理画面から、
 
 ここに有効化画面の画像を追加予定
 
-使い方
+## 使い方
 
 プラグインを有効化すると、WordPress管理画面から本プラグインの機能を利用できます。
 
-1. 操作画面を開く
+### 1. 操作画面を開く
 
-WordPress管理画面から、プラグインの操作画面を開きます。
+WordPress管理画面(ツール>記事エクスポート)から、プラグインの操作画面を開きます。
 
-ここに操作画面のスクリーンショットを追加予定
+![ダッシュボード](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/dashboard_tools_scs.png)
 
-2. 取得条件を指定
+
+### 2. 取得条件を指定
 
 取得したい記事の条件を指定します。
+指定する方法は２つあり、１つは四半期や１年の範囲でクイック選択する方法か、開始日と終了日を直接カレンダーで指定する方法が使えます。
 
-例えば、日付範囲を指定して、その期間内に公開された記事を対象にすることができます。
+![取得範囲の設定](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/tools_ui_scs.png)
 
-ここに条件指定部分の画像を追加予定
+### 3. エクスポート形式を指定
 
-3. 記事を取得
+エクスポート形式は、以下の4種類に対応しています。出力データは、(投稿日、記事タイトル、記事リンク）の形式です。
+- 1. csv (excel対応)
+- 2. マークダウン_リスト
+- 3. マークダウン_テーブル
+- 4. プレーンテキスト
 
-条件を指定したら、取得・検索などのボタンを押して記事を取得します。
+![エクスポート形式一覧](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/export-formats-dtails.png)
 
-取得された記事は画面上に一覧表示されます。
 
-ここに記事一覧の画像を追加予定
 
-4. エクスポート
+出力形式の指定は、操作画面のドロップダウンより選択することが可能です。
+
+![エクスポート形式の指定](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/export-formats.png)
+
+### 4. 記事一覧をエクスポート
 
 必要な記事を確認した後、エクスポート機能を使用してデータを出力します。
 

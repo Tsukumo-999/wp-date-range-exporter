@@ -1,0 +1,6 @@
+| 公開日 | 記事タイトル |
+| :--- | :--- |
+| 2026-07-12 | [Hello world!](http://metric-2607.local/hello-world/) |
+| 2026-07-12 | [sample](http://metric-2607.local/sample/) |
+| 2026-07-12 | [sample1](http://metric-2607.local/sample1/) |
+| 2026-07-12 | [sample2](http://metric-2607.local/sample2/) |
