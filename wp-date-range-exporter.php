@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP Date Range Post Exporter
  * Description: カレンダーで指定した期間、または四半期などの指定範囲の記事一覧をCSVやテキスト形式でエクスポートするプラグイン。
- * Version: 1.1.1
+ * Version: 1.1.2
  * Author: lumenHero
  */
 
@@ -32,11 +32,27 @@ function wdre_render_admin_page() {
         
         <div style="margin: 20px 0; padding: 15px; background: #fff; border: 1px solid #ccd0d4; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
             <strong style="display:inline-block; margin-right: 10px;">期間をクイック選択: </strong>
+            
+            <!-- 追加: 年を選択するドロップダウン -->
+            <select id="target_year" style="margin-right: 10px;">
+                <?php
+                global $wpdb;
+                // 一番古い公開済み記事の年を取得
+                $oldest_post =$wpdb->get_var("SELECT post_date FROM $wpdb->posts WHERE post_status = 'publish' AND post_type = 'post' ORDER BY post_date ASC LIMIT 1");
+                $oldest_year =$oldest_post ? (int) date('Y', strtotime($oldest_post)) : (int) date('Y');$current_year = (int) date('Y');
+                
+                // 現在の年から一番古い記事の年までループしてoptionを生成
+                for ( $i =$current_year; $i >=$oldest_year; $i-- ) {$selected = ( $i ===$current_year ) ? 'selected' : '';
+                    echo '<option value="' . esc_attr($i) . '" ' . $selected . '>' . esc_html($i) . '年</option>';
+                }
+                ?>
+            </select>
+
             <button type="button" class="button" onclick="wdreSetQuarter(1)">第1四半期 (1-3月)</button>
             <button type="button" class="button" onclick="wdreSetQuarter(2)">第2四半期 (4-6月)</button>
             <button type="button" class="button" onclick="wdreSetQuarter(3)">第3四半期 (7-9月)</button>
             <button type="button" class="button" onclick="wdreSetQuarter(4)">第4四半期 (10-12月)</button>
-            <button type="button" class="button" onclick="wdreSetYear()">今年1年</button>
+            <button type="button" class="button" onclick="wdreSetYear()">1年間</button>
         </div>
 
         <form method="post" action="">
@@ -75,7 +91,10 @@ function wdre_render_admin_page() {
     }
 
     function wdreSetDateRange(startMonth, startDay, endMonth, endDay) {
-        var year = new Date().getFullYear();
+        // セレクトボックスから選択された年を取得
+        var targetYear = document.getElementById('target_year').value;
+        var year = targetYear ? parseInt(targetYear, 10) : new Date().getFullYear();
+        
         var start = new Date(year, startMonth - 1, startDay);
         var end = new Date(year, endMonth, 0); 
         
@@ -110,11 +129,11 @@ function wdre_process_export_request() {
         wp_die( 'この操作を行う権限がありません。' );
     }
 
-    $start_date = sanitize_text_field( $_POST['start_date'] );
-    $end_date   = sanitize_text_field( $_POST['end_date'] );
-    $format     = sanitize_text_field( $_POST['format'] );
+    $start_date = sanitize_text_field($_POST['start_date'] );
+    $end_date   = sanitize_text_field($_POST['end_date'] );
+    $format     = sanitize_text_field($_POST['format'] );
 
-    if ( empty( $start_date ) || empty( $end_date ) ) {
+    if ( empty( $start_date ) || empty($end_date ) ) {
         return;
     }
 
@@ -133,7 +152,7 @@ function wdre_process_export_request() {
         'orderby'        => 'date',   // ← 日付を基準
     );
 
-    $query = new WP_Query( $args );
+    $query = new WP_Query($args );
     
     if ( $format === 'csv' ) {
         header( 'Content-Type: text/csv; charset=utf-8' );
@@ -153,7 +172,7 @@ function wdre_process_export_request() {
         exit;
     } else {
         // md_list と md_table の場合は .md 拡張子、それ以外は .txt
-        $ext = ( $format === 'md_list' || $format === 'md_table' ) ? 'md' : 'txt';
+        $ext = ( $format === 'md_list' ||$format === 'md_table' ) ? 'md' : 'txt';
         header( 'Content-Type: text/plain; charset=utf-8' );
         header( 'Content-Disposition: attachment; filename=posts_export_' . $start_date . '_to_' . $end_date . '.' .$ext );
         
