@@ -2,12 +2,10 @@
 
 ![概要画像ヘッダー](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/WP_DRE_header.png)
 
-wp-date-range-exporter は、WordPressの記事を指定した条件で取得・一覧表示・エクスポートするためのプラグインです。
-個人での利用・開発を目的として作成したものですが、グループ内での共有・利用を想定してGitHub上で公開しています。
-
 ## 概要
 
-wp-date-range-exporter は、WordPressに登録されている記事を対象として、指定した日付範囲などの条件から記事を取得し、一覧で確認・利用するためのプラグインです。
+wp-date-range-exporter は、WordPressの記事を指定した条件で取得・一覧表示・エクスポートするためのプラグインです。
+個人での利用・開発を目的として作成したものですが、グループ内での共有・利用を想定してGitHub上で公開しています。
 
 WordPress管理画面から操作できるため、データベースを直接操作することなく、対象となる記事を確認できます。
 
@@ -33,6 +31,18 @@ WordPress管理画面から操作できるため、データベースを直接�
 
 取得した記事情報を、指定した形式(csv,マークダウン,text 詳細は後述)で出力できます。
 
+---
+
+## 動作環境
+
+本プラグインは以下の環境を想定しています。インストール前にご確認ください。
+
+| 項目 | バージョン |
+| :--- | :--- |
+| **WordPress** | 7.0.1 以上 |
+| **PHP** | 8.4 以上推奨（7.2以降対応） |
+
+---
 
 ## インストール方法
 ### 1. GitHubからダウンロード
@@ -65,12 +75,11 @@ WordPress管理画面の左側メニューから **「プラグイン」** を�
 インストールが完了したら、WordPressのプラグイン一覧から wp-date-range-exporter を有効化します。
 ![プラグインの有効化](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/enable-plugin.png)
 
-
-
-## 使い方
-
 プラグインを有効化すると、WordPress管理画面から本プラグインの機能を利用できます。
 
+---
+
+## 使い方
 ### 1. 操作画面を開く
 
 WordPress管理画面(ツール>記事エクスポート)から、プラグインの操作画面を開きます。
@@ -81,7 +90,7 @@ WordPress管理画面(ツール>記事エクスポート)から、プラグイ�
 ### 2. 取得条件を指定
 
 取得したい記事の条件を指定します。
-指定する方法は２つあり、１つは四半期や１年の範囲でクイック選択する方法か、開始日と終了日を直接カレンダーで指定する方法が使えます。
+「期間をクイック選択」ボタンを使って四半期や1年をワンクリックで指定するか、開始日と終了日をカレンダーで直接指定します。
 
 ![取得範囲の設定](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/tools_ui_scs.png)
 
@@ -93,19 +102,45 @@ WordPress管理画面(ツール>記事エクスポート)から、プラグイ�
 - 3. Markdown形式（テーブル）
 - 4. プレーンテキスト(カンマ区切り)
 
-![エクスポート形式一覧](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/export-formats-dtails.png)
-
-
-
 出力形式の指定は、操作画面のドロップダウンより選択することが可能です。
 
 ![エクスポート形式の指定](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/export-formats.png)
 
 ### 4. 記事一覧をエクスポート
 
-必要な記事を確認した後、エクスポート機能を使用してデータを出力しダウンロードできます。
+必要な記事を確認した後、エクスポート機能を使用してデータを出力しダウンロードすることができます。
 
 ![設定後エクスポート](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/export-sample.png)
+
+
+### 💡 各フォーマットの出力サンプル
+用途に合わせて最適な形式を選択してください。
+![エクスポート形式一覧](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/export-formats-dtails.png)
+
+
+---
+
+## どのような仕組みで記事を取得しているのか？
+ 
+ 本プラグインは、WordPressのデータベースを直接操作するのではなく、WordPress標準のクエリ機能（WP_Query）を利用して安全に記事データを検索・取得しています。
+
+### 取得条件と仕様
+- 対象データ: 「投稿（post）」のみ
+- ステータス: 「公開済み（publish）」のみ（※下書きや非公開、ゴミ箱の記事は含まれません）
+- 並び順: 公開日の古い順
+- 取得項目: 「公開日」「記事タイトル」「URL」の3点のみ（※本文、記事ID、カテゴリーなどは取得しません）
+
+
+### 処理の流れ
+1. 管理画面で「抽出期間」と「出力形式」を指定して実行
+
+2. WordPressの標準機能で、期間内に該当する公開済みの記事を検索
+
+3. 対象記事から必要な項目（公開日・タイトル・URL）だけを抽出
+
+4. 画面への一覧表示は行わず、指定された形式のファイル（CSV, Markdown, テキスト）として直接ダウンロード
+
+--- 
 
 ## リポジトリのファイル構成
 
@@ -127,25 +162,6 @@ wp-date-range-exporter/
 | `README.md` | 本ドキュメント |
 | `releases/wp-date-range-exporter.zip` | WordPressへのインストールに使用するプラグイン本体のZIPファイル |
 
-## どのような仕組みで記事を取得しているのか？
- 
- 本プラグインは、WordPressのデータベースを直接操作するのではなく、WordPress標準のクエリ機能（WP_Query）を利用して安全に記事データを検索・取得しています。
-
-### 取得条件と仕様
-- 対象データ: 「投稿（post）」のみ
-- ステータス: 「公開済み（publish）」のみ（※下書きや非公開、ゴミ箱の記事は含まれません）
-- 並び順: 公開日の古い順
-- 取得項目: 「公開日」「記事タイトル」「URL」の3点のみ（※本文、記事ID、カテゴリーなどは取得しません）
-
-
-### 処理の流れ
-1. 管理画面で「抽出期間」と「出力形式」を指定して実行
-
-2. WordPressの標準機能で、期間内に該当する公開済みの記事を検索
-
-3. 対象記事から必要な項目（公開日・タイトル・URL）だけを抽出
-
-4. 画面への一覧表示は行わず、指定された形式のファイル（CSV, Markdown, テキスト）として直接ダウンロード
 
 ## 注意事項
 
