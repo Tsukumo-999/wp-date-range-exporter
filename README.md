@@ -1,8 +1,9 @@
-# ArticleLister
+# WP Date Range Exporter
+
+![概要画像ヘッダー](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/WP_DRE_header.png)
 
 wp-date-range-exporter は、WordPressの記事を指定した条件で取得・一覧表示・エクスポートするためのプラグインです。
 個人での利用・開発を目的として作成したものですが、グループ内での共有・利用を想定してGitHub上で公開しています。
-
 
 ## 概要
 
@@ -21,7 +22,7 @@ WordPress管理画面から操作できるため、データベースを直接�
 
 ### 記事の取得
 
-指定した条件に基づいて、WordPressに登録されている記事を取得します。
+指定した条件に基づいて、WordPressに登録されている記事(post)を取得します。
 
 ### 日付範囲の指定
 
@@ -34,38 +35,17 @@ WordPress管理画面から操作できるため、データベースを直接�
 
 ### エクスポート
 
-取得した記事情報を、後工程で利用できる形式に出力できます。
-
-
-## リポジトリのファイル構成
-
-現在のリポジトリには、主に以下のファイル・ディレクトリが含まれています。
-```text
-wp-date-range-exporter/
-├── wp-date-range-exporter.php
-├── README.md
-├── docs/ (README用の画像など)
-└── releases/
-    └── wp-date-range-exporter.zip
-```
-
-### 主なファイル
-| ファイル / ディレクトリ | 内容 |
-|---|---|
-| `wp-date-range-exporter.php` | プラグイン本体のソースコード |
-| `README.md` | 本ドキュメント |
-| `releases/wp-date-range-exporter.zip` | WordPressへのインストールに使用するプラグイン本体のZIPファイル |
-
+取得した記事情報を、指定した形式(csv,マークダウン,text 詳細は後述)で出力できます。
 
 
 ## インストール方法
-1. GitHubからダウンロード
+### 1. GitHubからダウンロード
 
 GitHubのリポジトリからプラグインをダウンロードします。
 
 ここにGitHubからのダウンロード方法の画像を追加予定
 
-2. WordPressへインストール
+### 2. WordPressへインストール
 
 WordPress管理画面から、
 
@@ -75,7 +55,7 @@ WordPress管理画面から、
 
 ここにインストール画面の画像を追加予定
 
-3. プラグインを有効化
+### 3. プラグインを有効化
 
 インストールが完了したら、WordPressのプラグイン一覧から wp-date-range-exporter を有効化します。
 
@@ -105,7 +85,7 @@ WordPress管理画面(ツール>記事エクスポート)から、プラグイ�
 - 1. csv (excel対応)
 - 2. マークダウン_リスト
 - 3. マークダウン_テーブル
-- 4. プレーンテキスト
+- 4. プレーンテキスト(カンマ区切り)
 
 ![エクスポート形式一覧](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/export-formats-dtails.png)
 
@@ -117,109 +97,93 @@ WordPress管理画面(ツール>記事エクスポート)から、プラグイ�
 
 ### 4. 記事一覧をエクスポート
 
-必要な記事を確認した後、エクスポート機能を使用してデータを出力します。
+必要な記事を確認した後、エクスポート機能を使用してデータを出力しダウンロードできます。
 
-ここにエクスポート操作の画像を追加予定
+![設定後エクスポート](https://raw.githubusercontent.com/Tsukumo-999/wp-date-range-exporter/main/docs/images/export-sample.png)
 
-どのような仕組みで記事を取得しているのか？
+## リポジトリのファイル構成
 
-本プラグインでは、WordPressに登録されている記事データを、WordPressが提供している仕組みを利用して取得しています。
+現在のリポジトリには、主に以下のファイル・ディレクトリが含まれています。
+```text
+wp-date-range-exporter/
+├── wp-date-range-exporter.php
+├── README.md
+├── LICENSE
+├── docs/ (README用の画像など)
+└── releases/
+    └── wp-date-range-exporter.zip
+```
 
-基本的には、WordPressのデータベースを直接操作するのではなく、WordPressの標準的なAPI・クエリ機能を利用して対象の記事を検索します。
+### 主なファイル
+| ファイル / ディレクトリ | 内容 |
+|---|---|
+| `wp-date-range-exporter.php` | プラグイン本体のソースコード |
+| `README.md` | 本ドキュメント |
+| `releases/wp-date-range-exporter.zip` | WordPressへのインストールに使用するプラグイン本体のZIPファイル |
 
-処理の流れ
-WordPress管理画面
-       │
-       ▼
-取得条件を指定
-       │
-       ▼
-WordPressの投稿データを検索
-       │
-       ▼
-条件に一致する記事を取得
-       │
-       ▼
-記事情報を一覧表示
-       │
-       ▼
-必要に応じてエクスポート
+## どのような仕組みで記事を取得しているのか？
+ 
+ 本プラグインは、WordPressのデータベースを直接操作するのではなく、WordPress標準のクエリ機能（WP_Query）を利用して安全に記事データを検索・取得しています。
 
-取得対象について
+### 取得条件と仕様
+- 対象データ: 「投稿（post）」のみ
+- ステータス: 「公開済み（publish）」のみ（※下書きや非公開、ゴミ箱の記事は含まれません）
+- 並び順: 公開日の古い順
+- 取得項目: 「公開日」「記事タイトル」「URL」の3点のみ（※本文、記事ID、カテゴリーなどは取得しません）
 
-本プラグインが取得するデータについては、以下のとおりです。
 
-項目	取得
-記事タイトル	○
-投稿日時	○
-記事ID	○
-URL	○
-本文	○
-カテゴリー	○
-タグ	○
+### 処理の流れ
+1. 管理画面で「抽出期間」と「出力形式」を指定して実行
 
-※ 実際の取得項目に合わせて変更してください。
+2. WordPressの標準機能で、期間内に該当する公開済みの記事を検索
 
-データについて
+3. 対象記事から必要な項目（公開日・タイトル・URL）だけを抽出
 
-本プラグインは、WordPressサイト内に登録されている記事情報を取得します。
+4. 画面への一覧表示は行わず、指定された形式のファイル（CSV, Markdown, テキスト）として直接ダウンロード
 
-取得したデータの取り扱いについては、利用しているWordPressサイトの運用ルールおよび管理者のポリシーに従ってください。
+## 注意事項
 
-また、エクスポートしたデータには記事の内容などが含まれる場合があるため、取り扱いには注意してください。
+> * 本プラグインはWordPress公式プラグインではありません。個人製作の非公式プラグインです。
+> * 利用する環境によっては正常に動作しない場合があります。
+> * 本番環境で使用する場合は、事前に十分な動作確認を行ってください。
+> * 大量の記事を取得する場合、サーバーの負荷が高くなる可能性があります。
 
-注意事項
 
-本プラグインはWordPress公式プラグインではありません。
-
-個人製作の非公式プラグインです。
-
-利用する環境によっては正常に動作しない場合があります。
-
-本番環境で使用する場合は、事前に十分な動作確認を行ってください。
-
-大量の記事を取得する場合、サーバーの負荷が高くなる可能性があります。
-
-エクスポートしたデータの取り扱いには注意してください。
-
-動作環境
+## 動作環境
 
 以下の環境を想定しています。
 
-項目	バージョン
-WordPress	X.X 以上
-PHP	X.X 以上
-ブラウザ	Google Chrome / Firefox / Safari / Edge
+| 項目 | バージョン |
+| :--- | :--- |
+| **WordPress** | 7.0.1 以上 |
+| **PHP** | 8.4 以上推奨（7.2以降対応） |
 
-※ 実際の動作確認環境に合わせて変更してください。
 
-開発について
+## 開発について
 
-本プロジェクトの開発時の名称は ArticleLister です。
+GitHubリポジトリおよびWordPressプラグインの名称には、機能が分かりやすいよう `wp-date-range-exporter` を使用しています。
 
-GitHubリポジトリおよびWordPressプラグインの名称には、機能が分かりやすいよう wp-date-range-exporter を使用しています。
+### 製作者
 
-Project name : ArticleLister
-Plugin name  : wp-date-range-exporter
+**lumenHero** (Tukumo)
 
-製作者
+- **GitHub:** [Tsukumo-999](https://github.com/Tsukumo-999)
+- **X (Twitter):** [@tukumolog](https://x.com/tukumolog)
+- **Websites:** 
+  - [TUKUMO工房](https://tukumolog.com/)
+  - [METRIC](https://tukumolog.topaz.ne.jp/)
 
-[製作者名]
+## License
 
-GitHub: [GitHubプロフィールへのリンク]
+**lumenHero Custom License**
 
-Website: [Webサイトへのリンク]
+本プラグインの著作権は作成者（lumenHero）に帰属します。
+個人・商用を問わず無償でのご利用やカスタマイズが可能ですが、**本プラグイン（改変したものを含む）を自身の著作物として公開・主張する行為や、無断での二次配布・販売は固く禁止**しております。
 
-X / Twitter: [SNSへのリンク]
+詳細な条項については [LICENSE](./LICENSE) ファイルを参照してください。
 
-License
+## Disclaimer
 
-[ライセンス名] のもとで公開しています。
-
-詳細については LICENSE を参照してください。
-
-Disclaimer
-
-本プラグインの利用によって発生したデータの損失、サイトの不具合、その他の問題について、製作者は責任を負いません。
+本プラグインの利用によって発生したデータの損失、サイトの不具合、その他の問題について、製作者は責任を負いません。 AsISの提供となります。
 
 利用者自身の責任において、バックアップや動作確認を行ったうえで使用してください。
